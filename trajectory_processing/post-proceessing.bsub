@@ -1,0 +1,29 @@
+#!/bin/sh
+#BSUB -q bowman
+#BSUB -n 4
+#BSUB -R span[ptile=4]
+#BSUB -J Post_process[1-7]
+#BSUB -o Post-process-%J.log
+#BSUB -e Post-process-%J.log
+
+export CONDA_PYTHON_EXE="/project/bowmore/jjmiller/anaconda3/bin/python"
+export PYTHONPATH="/project/bowmore/jjmiller/anaconda3/bin"
+export CONDA_PREFIX="/project/bowmore/jjmiller/anaconda3/"
+export CONDA_EXE="/project/bowmore/jjmiller/anaconda3/bin/conda"
+export PATH="$PATH:/project/bowmore/jjmiller/anaconda3/bin:/project/bowmore/jjmiller/anaconda3/condabin"
+
+#source /project/bowmore/mizimmer/installations/gromacs_2020.1_qr6_build
+d='/project/bowmanlab/jjmiller/Simulations/PlasmepsinV/ProcessedRuns'
+
+
+cd WT/Run$LSB_JOBINDEX
+echo 'Prot-Masses' |singularity exec --no-home -H $d -B /project:/project /project/bowmanlab/singularity/gromacs.sif gmx trjconv -f start.xtc -s md.tpr -pbc nojump -o $d/WT$LSB_JOBINDEX.xtc
+
+cd ../../NepMut/Run$LSB_JOBINDEX
+echo 'Prot-Masses' |singularity exec --no-home -H $d -B /project:/project /project/bowmanlab/singularity/gromacs.sif gmx trjconv -f start.xtc -s md.tpr -pbc nojump -o $d/Nep$LSB_JOBINDEX.xtc
+
+cd ../../Ser1pair/Run$LSB_JOBINDEX
+echo 'Prot-Masses' |singularity exec --no-home -H $d -B /project:/project /project/bowmanlab/singularity/gromacs.sif gmx trjconv -f start.xtc -s md.tpr -pbc nojump -o $d/Ser1$LSB_JOBINDEX.xtc
+
+cd ../../Ser2pair/Run$LSB_JOBINDEX
+echo 'Prot-Masses' |singularity exec --no-home -H $d -B /project:/project /project/bowmanlab/singularity/gromacs.sif gmx trjconv -f start.xtc -s md.tpr -pbc nojump -o $d/Ser2$LSB_JOBINDEX.xtc

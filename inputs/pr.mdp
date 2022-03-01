@@ -1,6 +1,7 @@
+define              = -DPOSRES
 integrator          = md
-nsteps              = 250000000 ; 1000 ns
-dt                  = .004
+nsteps              = 500000 ; 1.0 ns
+dt                  = .002
 comm-mode           = linear
 nstcomm             = 5
 
@@ -34,14 +35,14 @@ rvdw                = 0.9
 DispCorr            = EnerPres
 
 ; Output control
-nstxout             = 0
+nstxout             = 500000 ; 1 ns
 nstvout             = 0
 nstfout             = 0
 nstlog              = 0
-nstxtcout           = 5000   ; 20 ps
+nstxtcout           = 5000   ; 10 ps
 ;xtc-grps            = Prot-Masses
 energygrps          = System
-nstenergy           = 5000   ; 20 ps
+nstenergy           = 5000   ; 10 ps
 nstcalcenergy       = 1
 
 verlet-buffer-drift = -1
@@ -51,7 +52,7 @@ tc-grps             = System
 ref_t               = 300
 ld_seed             = -1
 
-Pcoupl              = Parrinello-Rahman
+Pcoupl              = berendsen
 Pcoupltype          = isotropic
 tau_p               = 1
 compressibility     = 4.5e-5

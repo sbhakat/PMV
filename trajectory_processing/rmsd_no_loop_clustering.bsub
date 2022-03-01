@@ -1,0 +1,70 @@
+#!/bin/sh
+#BSUB -q bowman
+#BSUB -R '(!gpu)'
+#BSUB -n 24
+#BSUB -R span[ptile=24]
+#BSUB -J cluster-PMV
+#BSUB -o ./logs/cluster-all
+#BSUB -e ./logs/cluster-all
+
+#export TMPDIR="/dev/shm"
+#export TMPDIR="./temp"
+export CONDA_PYTHON_EXE="/project/bowmore/jjmiller/anaconda3/bin/python"
+export PYTHONPATH="/project/bowmore/jjmiller/anaconda3/bin"
+export CONDA_PREFIX="/project/bowmore/jjmiller/anaconda3/"
+export CONDA_EXE="/project/bowmore/jjmiller/anaconda3/bin/conda"
+export PATH="$PATH:/project/bowmore/jjmiller/anaconda3/bin:/project/bowmore/jjmiller/anaconda3/condabin"
+export OMP_NUM_THREADS=24
+export NUMEXPR_MAX_THREADS=24
+
+
+python -u /project/bowmanlab/jjmiller/modules/enspara/enspara/apps/cluster.py \
+  --trajectories "/project/bowmanlab/jjmiller/Simulations/PlasmepsinV/ProcessedRuns/WT*.xtc" \
+  --topology "/project/bowmanlab/jjmiller/Simulations/PlasmepsinV/ProcessedRuns/WT-prot-masses.pdb" \
+  --atoms "((name N or name C or name CA) and not (residue 273 to 329))" \
+  --algorithm khybrid \
+  --cluster-number 3000 \
+  --cluster-iterations 2 \
+  --distances ./WT_distances.h5 \
+  --center-features ./WT_centers.npy \
+  --center-indices ./WT_centers_indices.npy \
+  --assignments ./WT_assignments.h5\
+
+ python -u /project/bowmanlab/jjmiller/modules/enspara/enspara/apps/cluster.py \
+   --trajectories "/project/bowmanlab/jjmiller/Simulations/PlasmepsinV/ProcessedRuns/NepMut*.xtc" \
+   --topology "/project/bowmanlab/jjmiller/Simulations/PlasmepsinV/ProcessedRuns/NepMut-prot-masses.pdb" \
+   --atoms "((name N or name C or name CA) and not (residue 275 to 331))" \
+   --algorithm khybrid \
+   --cluster-number 3000 \
+   --cluster-iterations 2 \
+   --distances ./Nep_distances.h5 \
+   --center-features ./Nep_centers.npy \
+   --center-indices ./Nep_centers_indices.npy \
+   --assignments ./Nep_assignments.h5\
+
+
+python -u /project/bowmanlab/jjmiller/modules/enspara/enspara/apps/cluster.py \
+  --trajectories "/project/bowmanlab/jjmiller/Simulations/PlasmepsinV/ProcessedRuns/Ser1*.xtc" \
+  --topology "/project/bowmanlab/jjmiller/Simulations/PlasmepsinV/ProcessedRuns/Ser1-prot-masses.pdb" \
+  --atoms "(backbone and resid 69 to 105)" \
+  --algorithm khybrid \
+  --cluster-number 3000 \
+  --cluster-iterations 2 \
+  --distances ./Ser1_distances.h5 \
+  --center-features ./Ser1_centers.npy \
+  --center-indices ./Ser1_centers_indices.npy \
+  --assignments ./Ser1_assignments.h5\
+
+
+python -u /project/bowmanlab/jjmiller/modules/enspara/enspara/apps/cluster.py \
+  --trajectories "/project/bowmanlab/jjmiller/Simulations/PlasmepsinV/ProcessedRuns/Ser2*.xtc" \
+  --topology "/project/bowmanlab/jjmiller/Simulations/PlasmepsinV/ProcessedRuns/Ser2-prot-masses.pdb" \
+  --atoms "(backbone and resid 69 to 105)" \
+  --algorithm khybrid \
+  --cluster-number 3000 \
+  --cluster-iterations 2 \
+  --distances ./Ser2_distances.h5 \
+  --center-features ./Ser2_centers.npy \
+  --center-indices ./Ser2_centers_indices.npy \
+  --assignments ./Ser2_assignments.h5\
+

@@ -1,0 +1,25 @@
+#!/bin/sh
+#BSUB -q bowman
+#BSUB -gpu "num=1:gmodel=QuadroRTX6000" #"num=1:gmodel=TeslaP100_PCIE_16GB"
+#BSUB -n 20
+#BSUB -R span[ptile=20]
+#BSUB -J Nep_PMV[1-7]
+#BSUB -o Run_Nep_PMV-%J.log
+#BSUB -e Run_Nep_PMV-%J.log
+
+export CONDA_PYTHON_EXE="/project/bowmore/jjmiller/anaconda3/bin/python"
+export PYTHONPATH="/project/bowmore/jjmiller/anaconda3/bin"
+export CONDA_PREFIX="/project/bowmore/jjmiller/anaconda3/"
+export CONDA_EXE="/project/bowmore/jjmiller/anaconda3/bin/conda"
+export PATH="$PATH:/project/bowmore/jjmiller/anaconda3/bin:/project/bowmore/jjmiller/anaconda3/condabin"
+
+#source /project/bowmore/mizimmer/installations/gromacs_2020.1_p100_build
+source /project/bowmore/mizimmer/installations/gromacs_2020.1_qr6_build
+d='/project/bowmanlab/jjmiller/Simulations/PlasmepsinV/SetupFiles'
+
+mkdir Run$LSB_JOBINDEX
+cp start.gro topol.top Run$LSB_JOBINDEX
+cd Run$LSB_JOBINDEX
+
+gmx grompp -f $d/npt.mdp -c start.gro -p topol.top -o md -maxwarn 1 -r start.gro
+gmx mdrun -s md -o md -c start -v -nt 20 -ntmpi 1 -ntomp 20 -x start -pin on
